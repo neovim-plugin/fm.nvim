@@ -1,6 +1,6 @@
 require("plenary.async").tests.add_to_env()
 local TmpDir = require("tests.tmpdir")
-local files = require("oil.adapters.files")
+local files = require("fm.adapters.files")
 local test_util = require("tests.test_util")
 
 a.describe("files adapter", function()
@@ -27,7 +27,7 @@ a.describe("files adapter", function()
 
   a.it("Creates files", function()
     local err = a.wrap(files.perform_action, 2)({
-      url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt",
+      url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt",
       entry_type = "file",
       type = "create",
     })
@@ -39,7 +39,7 @@ a.describe("files adapter", function()
 
   a.it("Creates directories", function()
     local err = a.wrap(files.perform_action, 2)({
-      url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a",
+      url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a",
       entry_type = "directory",
       type = "create",
     })
@@ -52,7 +52,7 @@ a.describe("files adapter", function()
   a.it("Deletes files", function()
     tmpdir:create({ "a.txt" })
     a.util.scheduler()
-    local url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt"
+    local url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt"
     local err = a.wrap(files.perform_action, 2)({
       url = url,
       entry_type = "file",
@@ -64,7 +64,7 @@ a.describe("files adapter", function()
 
   a.it("Deletes directories", function()
     tmpdir:create({ "a/" })
-    local url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a"
+    local url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a"
     local err = a.wrap(files.perform_action, 2)({
       url = url,
       entry_type = "directory",
@@ -77,8 +77,8 @@ a.describe("files adapter", function()
   a.it("Moves files", function()
     tmpdir:create({ "a.txt" })
     a.util.scheduler()
-    local src_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt"
-    local dest_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b.txt"
+    local src_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt"
+    local dest_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b.txt"
     local err = a.wrap(files.perform_action, 2)({
       src_url = src_url,
       dest_url = dest_url,
@@ -94,8 +94,8 @@ a.describe("files adapter", function()
   a.it("Moves directories", function()
     tmpdir:create({ "a/a.txt" })
     a.util.scheduler()
-    local src_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a"
-    local dest_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b"
+    local src_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a"
+    local dest_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b"
     local err = a.wrap(files.perform_action, 2)({
       src_url = src_url,
       dest_url = dest_url,
@@ -112,8 +112,8 @@ a.describe("files adapter", function()
   a.it("Copies files", function()
     tmpdir:create({ "a.txt" })
     a.util.scheduler()
-    local src_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt"
-    local dest_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b.txt"
+    local src_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a.txt"
+    local dest_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b.txt"
     local err = a.wrap(files.perform_action, 2)({
       src_url = src_url,
       dest_url = dest_url,
@@ -130,8 +130,8 @@ a.describe("files adapter", function()
   a.it("Recursively copies directories", function()
     tmpdir:create({ "a/a.txt" })
     a.util.scheduler()
-    local src_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a"
-    local dest_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b"
+    local src_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "a"
+    local dest_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "b"
     local err = a.wrap(files.perform_action, 2)({
       src_url = src_url,
       dest_url = dest_url,
@@ -147,23 +147,23 @@ a.describe("files adapter", function()
     })
   end)
 
-  a.it("Editing a new oil://path/ creates an oil buffer", function()
-    local tmpdir_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "/"
+  a.it("Editing a new fm://path/ creates an fm buffer", function()
+    local tmpdir_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "/"
     vim.cmd.edit({ args = { tmpdir_url } })
-    test_util.wait_for_autocmd({ "User", pattern = "OilEnter" })
-    local new_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "newdir"
+    test_util.wait_for_autocmd({ "User", pattern = "FmEnter" })
+    local new_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "newdir"
     vim.cmd.edit({ args = { new_url } })
-    test_util.wait_for_autocmd({ "User", pattern = "OilEnter" })
-    assert.equals("oil", vim.bo.filetype)
+    test_util.wait_for_autocmd({ "User", pattern = "FmEnter" })
+    assert.equals("fm", vim.bo.filetype)
     -- The normalization will add a '/'
     assert.equals(new_url .. "/", vim.api.nvim_buf_get_name(0))
   end)
 
-  a.it("Editing a new oil://file.rb creates a normal buffer", function()
-    local tmpdir_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "/"
+  a.it("Editing a new fm://file.rb creates a normal buffer", function()
+    local tmpdir_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "/"
     vim.cmd.edit({ args = { tmpdir_url } })
     test_util.wait_for_autocmd("BufReadPost")
-    local new_url = "oil://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "file.rb"
+    local new_url = "fm://" .. vim.fn.fnamemodify(tmpdir.path, ":p") .. "file.rb"
     vim.cmd.edit({ args = { new_url } })
     test_util.wait_for_autocmd("BufReadPost")
     assert.equals("ruby", vim.bo.filetype)

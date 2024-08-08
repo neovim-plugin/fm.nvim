@@ -25,7 +25,7 @@
 
 ## get_entry_on_line(bufnr, lnum)
 
-`get_entry_on_line(bufnr, lnum): nil|oil.Entry` \
+`get_entry_on_line(bufnr, lnum): nil|fm.Entry` \
 Get the entry on a specific line (1-indexed)
 
 | Param | Type      | Desc |
@@ -35,43 +35,43 @@ Get the entry on a specific line (1-indexed)
 
 ## get_cursor_entry()
 
-`get_cursor_entry(): nil|oil.Entry` \
+`get_cursor_entry(): nil|fm.Entry` \
 Get the entry currently under the cursor
 
 
 ## discard_all_changes()
 
 `discard_all_changes()` \
-Discard all changes made to oil buffers
+Discard all changes made to fm buffers
 
 
 ## set_columns(cols)
 
 `set_columns(cols)` \
-Change the display columns for oil
+Change the display columns for fm
 
 | Param | Type               | Desc |
 | ----- | ------------------ | ---- |
-| cols  | `oil.ColumnSpec[]` |      |
+| cols  | `fm.ColumnSpec[]` |      |
 
 ## set_sort(sort)
 
 `set_sort(sort)` \
-Change the sort order for oil
+Change the sort order for fm
 
 | Param | Type             | Desc                                                                                  |
 | ----- | ---------------- | ------------------------------------------------------------------------------------- |
-| sort  | `oil.SortSpec[]` | List of columns plus direction. See :help oil-columns to see which ones are sortable. |
+| sort  | `fm.SortSpec[]` | List of columns plus direction. See :help fm-columns to see which ones are sortable. |
 
 **Examples:**
 ```lua
-require("oil").set_sort({ { "type", "asc" }, { "size", "desc" } })
+require("fm").set_sort({ { "type", "asc" }, { "size", "desc" } })
 ```
 
 ## set_is_hidden_file(is_hidden_file)
 
 `set_is_hidden_file(is_hidden_file)` \
-Change how oil determines if the file is hidden
+Change how fm determines if the file is hidden
 
 | Param          | Type                                                  | Desc                                         |
 | -------------- | ----------------------------------------------------- | -------------------------------------------- |
@@ -95,7 +95,7 @@ Get the current directory
 ## open_float(dir)
 
 `open_float(dir)` \
-Open oil browser in a floating window
+Open fm browser in a floating window
 
 | Param | Type          | Desc                                                                                        |
 | ----- | ------------- | ------------------------------------------------------------------------------------------- |
@@ -104,7 +104,7 @@ Open oil browser in a floating window
 ## toggle_float(dir)
 
 `toggle_float(dir)` \
-Open oil browser in a floating window, or close it if open
+Open fm browser in a floating window, or close it if open
 
 | Param | Type          | Desc                                                                                        |
 | ----- | ------------- | ------------------------------------------------------------------------------------------- |
@@ -113,7 +113,7 @@ Open oil browser in a floating window, or close it if open
 ## open(dir)
 
 `open(dir)` \
-Open oil browser for a directory
+Open fm browser for a directory
 
 | Param | Type          | Desc                                                                                        |
 | ----- | ------------- | ------------------------------------------------------------------------------------------- |
@@ -122,7 +122,7 @@ Open oil browser for a directory
 ## close()
 
 `close()` \
-Restore the buffer that was present when oil was opened
+Restore the buffer that was present when fm was opened
 
 
 ## open_preview(opts)
@@ -144,12 +144,12 @@ Select the entry under the cursor
 
 | Param    | Type                         | Desc                                                    |                                                      |
 | -------- | ---------------------------- | ------------------------------------------------------- | ---------------------------------------------------- |
-| opts     | `nil\|oil.SelectOpts`        |                                                         |                                                      |
+| opts     | `nil\|fm.SelectOpts`        |                                                         |                                                      |
 |          | vertical                     | `nil\|boolean`                                          | Open the buffer in a vertical split                  |
 |          | horizontal                   | `nil\|boolean`                                          | Open the buffer in a horizontal split                |
 |          | split                        | `nil\|"aboveleft"\|"belowright"\|"topleft"\|"botright"` | Split modifier                                       |
 |          | tab                          | `nil\|boolean`                                          | Open the buffer in a new tab                         |
-|          | close                        | `nil\|boolean`                                          | Close the original oil buffer once selection is made |
+|          | close                        | `nil\|boolean`                                          | Close the original fm buffer once selection is made |
 | callback | `nil\|fun(err: nil\|string)` | Called once all entries have been opened                |                                                      |
 
 ## save(opts, cb)
@@ -171,11 +171,11 @@ If you provide your own callback function, there will be no notification for err
 ## setup(opts)
 
 `setup(opts)` \
-Initialize oil
+Initialize fm
 
 | Param | Type                 | Desc |
 | ----- | -------------------- | ---- |
-| opts  | `oil.setupOpts\|nil` |      |
+| opts  | `fm.setupOpts\|nil` |      |
 
 
 <!-- /API -->

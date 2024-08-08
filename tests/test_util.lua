@@ -1,13 +1,13 @@
 require("plenary.async").tests.add_to_env()
-local cache = require("oil.cache")
-local test_adapter = require("oil.adapters.test")
+local cache = require("fm.cache")
+local test_adapter = require("fm.adapters.test")
 local M = {}
 
 M.reset_editor = function()
-  require("oil").setup({
+  require("fm").setup({
     columms = {},
     adapters = {
-      ["oil-test://"] = "test",
+      ["fm-test://"] = "test",
     },
     prompt_save_on_select_new_entry = false,
   })
@@ -71,35 +71,35 @@ M.feedkeys = function(actions, timestep)
 end
 
 M.actions = {
-  ---Open oil and wait for it to finish rendering
+  ---Open fm and wait for it to finish rendering
   ---@param args string[]
   open = function(args)
     vim.schedule(function()
-      vim.cmd.Oil({ args = args })
+      vim.cmd.Fm({ args = args })
       -- If this buffer was already open, manually dispatch the autocmd to finish the wait
-      if vim.b.oil_ready then
+      if vim.b.fm_ready then
         vim.api.nvim_exec_autocmds("User", {
-          pattern = "OilEnter",
+          pattern = "FmEnter",
           modeline = false,
           data = { buf = vim.api.nvim_get_current_buf() },
         })
       end
     end)
-    M.wait_for_autocmd({ "User", pattern = "OilEnter" })
+    M.wait_for_autocmd({ "User", pattern = "FmEnter" })
   end,
 
   ---Save all changes and wait for operation to complete
   save = function()
-    vim.schedule_wrap(require("oil").save)({ confirm = false })
-    M.wait_for_autocmd({ "User", pattern = "OilMutationComplete" })
+    vim.schedule_wrap(require("fm").save)({ confirm = false })
+    M.wait_for_autocmd({ "User", pattern = "FmMutationComplete" })
   end,
 
   ---@param bufnr? integer
   reload = function(bufnr)
-    M.await(require("oil.view").render_buffer_async, 3, bufnr or 0)
+    M.await(require("fm.view").render_buffer_async, 3, bufnr or 0)
   end,
 
-  ---Move cursor to a file or directory in an oil buffer
+  ---Move cursor to a file or directory in an fm buffer
   ---@param filename string
   focus = function(filename)
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
@@ -114,13 +114,13 @@ M.actions = {
   end,
 }
 
----Get the raw list of filenames from an unmodified oil buffer
+---Get the raw list of filenames from an unmodified fm buffer
 ---@param bufnr? integer
 ---@return string[]
 M.parse_entries = function(bufnr)
   bufnr = bufnr or 0
   if vim.bo[bufnr].modified then
-    error("parse_entries doesn't work on a modified oil buffer")
+    error("parse_entries doesn't work on a modified fm buffer")
   end
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, true)
   return vim.tbl_map(function(line)

@@ -13,16 +13,16 @@ Have a cool recipe to share? Open a pull request and add it to this doc!
 
 ```lua
 local detail = false
-require("oil").setup({
+require("fm").setup({
   keymaps = {
     ["gd"] = {
       desc = "Toggle file detail view",
       callback = function()
         detail = not detail
         if detail then
-          require("oil").set_columns({ "icon", "permissions", "size", "mtime" })
+          require("fm").set_columns({ "icon", "permissions", "size", "mtime" })
         else
-          require("oil").set_columns({ "icon" })
+          require("fm").set_columns({ "icon" })
         end
       end,
     },
@@ -57,14 +57,14 @@ local git_ignored = setmetatable({}, {
   end,
 })
 
-require("oil").setup({
+require("fm").setup({
   view_options = {
     is_hidden_file = function(name, _)
       -- dotfiles are always considered hidden
       if vim.startswith(name, ".") then
         return true
       end
-      local dir = require("oil").get_current_dir()
+      local dir = require("fm").get_current_dir()
       -- if no local directory (e.g. for ssh connections), always show
       if not dir then
         return false

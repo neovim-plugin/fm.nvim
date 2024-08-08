@@ -26,7 +26,7 @@ HERE = os.path.dirname(__file__)
 ROOT = os.path.abspath(os.path.join(HERE, os.path.pardir))
 README = os.path.join(ROOT, "README.md")
 DOC = os.path.join(ROOT, "doc")
-VIMDOC = os.path.join(DOC, "oil.txt")
+VIMDOC = os.path.join(DOC, "fm.txt")
 
 
 def add_md_link_path(path: str, lines: List[str]) -> List[str]:
@@ -39,7 +39,7 @@ def add_md_link_path(path: str, lines: List[str]) -> List[str]:
 def update_md_api():
     api_doc = os.path.join(DOC, "api.md")
     types = parse_directory(os.path.join(ROOT, "lua"))
-    funcs = types.files["oil/init.lua"].functions
+    funcs = types.files["fm/init.lua"].functions
     lines = ["\n"] + render_md_api2(funcs, types, 2) + ["\n"]
     replace_section(
         api_doc,
@@ -89,8 +89,8 @@ def update_md_toc(filename: str, max_level: int = 99):
 
 
 def update_config_options():
-    config_file = os.path.join(ROOT, "lua", "oil", "config.lua")
-    opt_lines = ['\n```lua\nrequire("oil").setup({\n']
+    config_file = os.path.join(ROOT, "lua", "fm", "config.lua")
+    opt_lines = ['\n```lua\nrequire("fm").setup({\n']
     opt_lines.extend(read_section(config_file, r"^\s*local default_config =", r"^}$"))
     replace_section(
         README,
@@ -181,10 +181,10 @@ COL_DEFS = [
 
 
 def get_options_vimdoc() -> "VimdocSection":
-    section = VimdocSection("config", "oil-config")
-    config_file = os.path.join(ROOT, "lua", "oil", "config.lua")
+    section = VimdocSection("config", "fm-config")
+    config_file = os.path.join(ROOT, "lua", "fm", "config.lua")
     opt_lines = read_section(config_file, r"^local default_config =", r"^}$")
-    lines = ["\n", ">lua\n", '    require("oil").setup({\n']
+    lines = ["\n", ">lua\n", '    require("fm").setup({\n']
     lines.extend(indent(opt_lines, 4))
     lines.extend(["    })\n", "<\n"])
     section.body = lines
@@ -192,12 +192,12 @@ def get_options_vimdoc() -> "VimdocSection":
 
 
 def get_options_detail_vimdoc() -> "VimdocSection":
-    section = VimdocSection("options", "oil-options")
+    section = VimdocSection("options", "fm-options")
     section.body.append(
         """
-skip_confirm_for_simple_edits                  *oil.skip_confirm_for_simple_edits*
+skip_confirm_for_simple_edits                  *fm.skip_confirm_for_simple_edits*
     type: `boolean` default: `false`
-    Before performing filesystem operations, Oil displays a confirmation popup to ensure
+    Before performing filesystem operations, Fm displays a confirmation popup to ensure
     that all operations are intentional. When this option is `true`, the popup will be
     skipped if the operations:
         * contain no deletes
@@ -205,7 +205,7 @@ skip_confirm_for_simple_edits                  *oil.skip_confirm_for_simple_edit
         * contain at most one copy or move
         * contain at most five creates
 
-prompt_save_on_select_new_entry              *oil.prompt_save_on_select_new_entry*
+prompt_save_on_select_new_entry              *fm.prompt_save_on_select_new_entry*
     type: `boolean` default: `true`
     There are two cases where this option is relevant:
     1. You copy a file to a new location, then you select it and make edits before
@@ -214,23 +214,23 @@ prompt_save_on_select_new_entry              *oil.prompt_save_on_select_new_entr
        changes before saving.
 
     In case 1, when you edit the file you are actually editing the original file because
-    oil has not yet moved/copied it to its new location. This means that the original
+    fm has not yet moved/copied it to its new location. This means that the original
     file will, perhaps unexpectedly, also be changed by any edits you make.
 
     Case 2 is similar; when you edit the directory you are again actually editing the
     original location of the directory. If you add new files, those files will be
     created in both the original location and the copied directory.
 
-    When this option is `true`, Oil will prompt you to save before entering a file or
-    directory that is pending within oil, but does not exist on disk.
+    When this option is `true`, Fm will prompt you to save before entering a file or
+    directory that is pending within fm, but does not exist on disk.
 """
     )
     return section
 
 
 def get_highlights_vimdoc() -> "VimdocSection":
-    section = VimdocSection("Highlights", "oil-highlights", ["\n"])
-    highlights = read_nvim_json('require("oil")._get_highlights()')
+    section = VimdocSection("Highlights", "fm-highlights", ["\n"])
+    highlights = read_nvim_json('require("fm")._get_highlights()')
     for hl in highlights:
         name = hl["name"]
         desc = hl.get("desc")
@@ -250,23 +250,23 @@ def load_params(params: Dict[str, Any]) -> List[LuaParam]:
 
 
 def get_actions_vimdoc() -> "VimdocSection":
-    section = VimdocSection("Actions", "oil-actions", ["\n"])
+    section = VimdocSection("Actions", "fm-actions", ["\n"])
     section.body.append(
-        """The `keymaps` option in `oil.setup` allow you to create mappings using all the same parameters as |vim.keymap.set|.
+        """The `keymaps` option in `fm.setup` allow you to create mappings using all the same parameters as |vim.keymap.set|.
 >lua
     keymaps = {
         -- Mappings can be a string
         ["~"] = "<cmd>edit $HOME<CR>",
         -- Mappings can be a function
         ["gd"] = function()
-            require("oil").set_columns({ "icon", "permissions", "size", "mtime" })
+            require("fm").set_columns({ "icon", "permissions", "size", "mtime" })
         end,
         -- You can pass additional opts to vim.keymap.set by using
         -- a table with the mapping as the first element.
         ["<leader>ff"] = {
             function()
                 require("telescope.builtin").find_files({
-                    cwd = require("oil").get_current_dir()
+                    cwd = require("fm").get_current_dir()
                 })
             end,
             mode = "n",
@@ -291,11 +291,11 @@ def get_actions_vimdoc() -> "VimdocSection":
     section.body.append("\n")
     section.body.extend(
         wrap(
-            """Below are the actions that can be used in the `keymaps` section of config options. You can refer to them as strings (e.g. "actions.<action_name>") or you can use the functions directly with `require("oil.actions").action_name.callback()`"""
+            """Below are the actions that can be used in the `keymaps` section of config options. You can refer to them as strings (e.g. "actions.<action_name>") or you can use the functions directly with `require("fm.actions").action_name.callback()`"""
         )
     )
     section.body.append("\n")
-    actions = read_nvim_json('require("oil.actions")._get_actions()')
+    actions = read_nvim_json('require("fm.actions")._get_actions()')
     actions.sort(key=lambda a: a["name"])
     for action in actions:
         if action.get("deprecated"):
@@ -317,7 +317,7 @@ def get_actions_vimdoc() -> "VimdocSection":
 
 
 def get_columns_vimdoc() -> "VimdocSection":
-    section = VimdocSection("Columns", "oil-columns", ["\n"])
+    section = VimdocSection("Columns", "fm-columns", ["\n"])
     section.body.extend(
         wrap(
             'Columns can be specified as a string to use default arguments (e.g. `"icon"`), or as a table to pass parameters (e.g. `{"size", highlight = "Special"}`)'
@@ -342,45 +342,45 @@ def get_columns_vimdoc() -> "VimdocSection":
 
 
 def get_trash_vimdoc() -> "VimdocSection":
-    section = VimdocSection("Trash", "oil-trash", [])
+    section = VimdocSection("Trash", "fm-trash", [])
     section.body.append(
         """
-Oil has built-in support for using the system trash. When
+Fm has built-in support for using the system trash. When
 `delete_to_trash = true`, any deleted files will be sent to the trash instead
 of being permanently deleted. You can browse the trash for a directory using
 the `toggle_trash` action (bound to `g\\` by default). You can view all files
-in the trash with `:Oil --trash /`.
+in the trash with `:Fm --trash /`.
 
 To restore files, simply delete them from the trash and put them in the desired
 destination, the same as any other file operation. If you delete files from the
 trash they will be permanently deleted (purged).
 
 Linux:
-    Oil supports the FreeDesktop trash specification.
+    Fm supports the FreeDesktop trash specification.
     https://specifications.freedesktop.org/trash-spec/trashspec-1.0.html
     All features should work.
 
 Mac:
-    Oil has limited support for MacOS due to the proprietary nature of the
+    Fm has limited support for MacOS due to the proprietary nature of the
     implementation. The trash bin can only be viewed as a single dir
     (instead of being able to see files that were trashed from a directory).
 
 Windows:
-    Oil does not yet support the Windows trash. PRs are welcome!
+    Fm does not yet support the Windows trash. PRs are welcome!
 """
     )
     return section
 
 
 def generate_vimdoc():
-    doc = Vimdoc("oil.txt", "oil")
+    doc = Vimdoc("fm.txt", "fm")
     types = parse_directory(os.path.join(ROOT, "lua"))
-    funcs = types.files["oil/init.lua"].functions
+    funcs = types.files["fm/init.lua"].functions
     doc.sections.extend(
         [
             get_options_vimdoc(),
             get_options_detail_vimdoc(),
-            VimdocSection("API", "oil-api", render_vimdoc_api2("oil", funcs, types)),
+            VimdocSection("API", "fm-api", render_vimdoc_api2("fm", funcs, types)),
             get_columns_vimdoc(),
             get_actions_vimdoc(),
             get_highlights_vimdoc(),

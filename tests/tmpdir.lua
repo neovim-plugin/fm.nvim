@@ -1,4 +1,4 @@
-local fs = require("oil.fs")
+local fs = require("fm.fs")
 local test_util = require("tests.test_util")
 
 local await = test_util.await
@@ -31,7 +31,7 @@ end
 local TmpDir = {}
 
 TmpDir.new = function()
-  local path = await(vim.loop.fs_mkdtemp, 2, "oil_test_XXXXXXXXX")
+  local path = await(vim.loop.fs_mkdtemp, 2, "fm_test_XXXXXXXXX")
   a.util.scheduler()
   return setmetatable({ path = path }, {
     __index = TmpDir,
@@ -70,7 +70,7 @@ local read_file = function(filepath)
 end
 
 ---@param dir string
----@param cb fun(err: nil|string, entry: {type: oil.EntryType, name: string, root: string}
+---@param cb fun(err: nil|string, entry: {type: fm.EntryType, name: string, root: string}
 local function walk(dir)
   local ret = {}
   for name, type in vim.fs.dir(dir) do
