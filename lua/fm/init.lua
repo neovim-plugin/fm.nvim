@@ -318,6 +318,7 @@ M.open_float = function(dir)
         -- Update the floating window title
         if vim.fn.has("nvim-0.9") == 1 and config.float.border ~= "none" then
           local cur_win_opts = vim.api.nvim_win_get_config(winid)
+          local title = '  File Manager - ' .. get_title() .. ' '
           vim.api.nvim_win_set_config(winid, {
             relative = "editor",
             row = cur_win_opts.row,
@@ -325,6 +326,7 @@ M.open_float = function(dir)
             width = cur_win_opts.width,
             height = cur_win_opts.height,
             title = '  File Manager - ' .. get_title() .. ' ',
+            title_pos = 'center'
           })
         end
       end,
