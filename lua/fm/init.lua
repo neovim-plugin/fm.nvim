@@ -324,7 +324,7 @@ M.open_float = function(dir)
             col = cur_win_opts.col,
             width = cur_win_opts.width,
             height = cur_win_opts.height,
-            title = get_title(),
+            title = 'File Manager - ' .. get_title(),
           })
         end
       end,
